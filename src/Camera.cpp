@@ -1,15 +1,20 @@
 #include <iostream>
+#include "Timestamp.hpp"
 #include "Camera.hpp"
 
 namespace dlc {
     Camera::Camera() {
         if (!SDL_InitSubSystem(SDL_INIT_CAMERA)) {
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }
         int count = 0;
         SDL_CameraID *cameras = SDL_GetCameras(&count);
         if (cameras == nullptr || count == 0) {
+            Timestamp(std::cerr);
+            std::cerr << "Camera not found!" << std::endl;
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }
@@ -17,6 +22,7 @@ namespace dlc {
         SDL_free(cameras);
         camera = SDL_OpenCamera(cameraID, nullptr);
         if (camera == nullptr) {
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }

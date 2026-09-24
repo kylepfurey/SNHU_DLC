@@ -1,12 +1,15 @@
 #include <iostream>
+#include "Timestamp.hpp"
 #include "Window.hpp"
 
 namespace dlc {
     Window::Window() {
         if (!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }
+        event.type = SDL_EVENT_QUIT;
         window = SDL_CreateWindow(
             "SNHU DLC",
             1920,
@@ -14,15 +17,18 @@ namespace dlc {
             SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE
         );
         if (window == nullptr) {
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }
         renderer = SDL_CreateRenderer(window, nullptr);
         if (renderer == nullptr) {
+            Timestamp(std::cerr);
             std::cerr << SDL_GetError() << std::endl;
             return;
         }
-        event.type = SDL_EVENT_QUIT;
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
     }
 
     Window::~Window() {
@@ -65,11 +71,11 @@ namespace dlc {
     }
 
     void Window::Render(SDL_Texture *texture) const {
-        if (texture == nullptr || renderer == nullptr) {
+        if (renderer == nullptr) {
             return;
         }
         SDL_RenderClear(renderer);
-        if (texture) {
+        if (texture != nullptr) {
             SDL_RenderTexture(renderer, texture, nullptr, nullptr);
         }
         SDL_RenderPresent(renderer);
