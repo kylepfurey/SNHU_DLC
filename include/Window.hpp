@@ -25,6 +25,7 @@ namespace dlc {
         bool ShouldClose() const;
         SDL_Event &GetEvent();
         const SDL_Event &GetEvent() const;
+        void ClearScreen() const;
         SDL_Renderer *GetRenderer();
         const SDL_Renderer *GetRenderer() const;
         void UpdateScreen() const;

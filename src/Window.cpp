@@ -72,6 +72,14 @@ namespace dlc {
         return event;
     }
 
+    void Window::ClearScreen() const {
+        if (renderer == nullptr) {
+            return;
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+    }
+
     SDL_Renderer *Window::GetRenderer() {
         return renderer;
     }

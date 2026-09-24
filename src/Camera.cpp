@@ -41,7 +41,7 @@ namespace dlc {
     }
 
     bool Camera::IsConnected() const {
-        return camera != nullptr;
+        return camera != nullptr && SDL_GetCameraPermissionState(camera) == SDL_CAMERA_PERMISSION_STATE_APPROVED;
     }
 
     bool Camera::Reconnect() {

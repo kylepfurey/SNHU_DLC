@@ -1,9 +1,9 @@
 #include <iostream>
 #include <Timestamp.hpp>
 #include <Window.hpp>
-#include <Camera.hpp>
 #include <Text.hpp>
 #include <Controller.hpp>
+#include <Camera.hpp>
 #include <Drone.hpp>
 
 using namespace std;
@@ -24,10 +24,13 @@ int main() {
     if (!text.IsValid()) {
         return -1;
     }
-    Camera camera;
     Controller controller;
+    Camera camera;
+    Timestamp(cout);
+    cout << "Starting." << endl;
     bool running = true;
     while (running) {
+        // Handle events
         while (window.UpdateEvent()) {
             if (window.ShouldClose()) {
                 Timestamp(cout);
@@ -56,16 +59,88 @@ int main() {
                         controller.Reconnect();
                         break;
                 }
+            } else if ((window.GetEvent().type == SDL_EVENT_CAMERA_DEVICE_ADDED ||
+                        window.GetEvent().type == SDL_EVENT_CAMERA_DEVICE_APPROVED)) {
+                // Reconnect camera
+                if (!camera.IsConnected()) {
+                    Timestamp(cout);
+                    cout << "Reconnecting camera." << endl;
+                    camera.Reconnect();
+                }
+            } else if (window.GetEvent().type == SDL_EVENT_GAMEPAD_ADDED) {
+                // Reconnect controller
+                if (!controller.IsConnected()) {
+                    Timestamp(cout);
+                    cout << "Reconnecting controller." << endl;
+                    controller.Reconnect();
+                }
             }
         }
+        // Update input
+        controller.Update();
+        // Clear
+        window.ClearScreen();
+        // Video feed
         camera.Render(window.GetRenderer());
+        // Title text
         text << "SNHU DLC";
         text.Render(
             window.GetRenderer(),
-            {0.5f, 0.1f},
-            {0.5f, 1.0f},
+            {0.5f, 0.0f},
+            {255, 255, 255, 255},
+            {0.5f, 0.0f},
             {0, 0, 0, 255}
         );
+        // Controller status
+        bool controllerConnected = controller.IsConnected();
+        text << "Controller";
+        text.Render(
+            window.GetRenderer(),
+            {0.0f, 0.5f},
+            {
+                static_cast<Uint8>(controllerConnected ? 0 : 255),
+                static_cast<Uint8>(controllerConnected ? 255 : 0),
+                0,
+                255
+            },
+            {0.0f, 0.0f},
+            {0, 0, 0, 255}
+        );
+        // Camera status
+        bool cameraConnected = camera.IsConnected();
+        text << "Camera";
+        text.Render(
+            window.GetRenderer(),
+            {0.0f, 0.5f},
+            {
+                static_cast<Uint8>(cameraConnected ? 0 : 255),
+                static_cast<Uint8>(cameraConnected ? 255 : 0),
+                0,
+                255
+            },
+            {0.0f, 1.0f},
+            {0, 0, 0, 255}
+        );
+        // Stick inputs
+        SDL_FPoint leftStick = controller.GetLeftStick();
+        text << '{' << leftStick.x << ", " << leftStick.y << "} LS";
+        text.Render(
+            window.GetRenderer(),
+            {1.0f, 0.5f},
+            {0, 0, 255, 255},
+            {1.0f, 1.0f},
+            {0, 0, 0, 255}
+        );
+        SDL_FPoint rightStick = controller.GetRightStick();
+        text << '{' << rightStick.x << ", " << rightStick.y << "} RS";
+        text.Render(
+            window.GetRenderer(),
+            {1.0f, 0.5f},
+            {255, 255, 0, 255},
+            {1.0f, 0.0f},
+            {0, 0, 0, 255}
+        );
+        // Render
         window.UpdateScreen();
     }
     return 0;

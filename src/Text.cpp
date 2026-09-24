@@ -42,16 +42,20 @@ namespace dlc {
     void Text::Render(
         SDL_Renderer *renderer,
         SDL_FPoint screenPosition,
-        SDL_FPoint textPivot,
         SDL_Color textColor,
+        SDL_FPoint textPivot,
         SDL_Color backgroundColor
     ) {
         if (renderer == nullptr || font == nullptr) {
             return;
         }
+        std::string str = text.str();
+        if (str.empty()) {
+            return;
+        }
         SDL_Surface *surface = TTF_RenderText_Blended(
             font,
-            text.str().c_str(),
+            str.c_str(),
             0,
             textColor
         );

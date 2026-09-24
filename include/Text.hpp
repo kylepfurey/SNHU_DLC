@@ -25,8 +25,8 @@ namespace dlc {
         void Render(
             SDL_Renderer *renderer,
             SDL_FPoint screenPosition,
-            SDL_FPoint textPivot,
             SDL_Color textColor,
+            SDL_FPoint textPivot = {0.0f, 0.5f},
             SDL_Color backgroundColor = {}
         );
 
