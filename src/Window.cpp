@@ -43,6 +43,16 @@ namespace dlc {
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
     }
 
+    bool Window::IsValid() const {
+        return window != nullptr && renderer != nullptr;
+    }
+
+    bool Window::Rebuild() {
+        this->~Window();
+        new(this) Window();
+        return IsValid();
+    }
+
     bool Window::UpdateEvent() {
         if (window == nullptr) {
             return false;
@@ -70,13 +80,9 @@ namespace dlc {
         return renderer;
     }
 
-    void Window::Render(SDL_Texture *texture) const {
+    void Window::UpdateScreen() const {
         if (renderer == nullptr) {
             return;
-        }
-        SDL_RenderClear(renderer);
-        if (texture != nullptr) {
-            SDL_RenderTexture(renderer, texture, nullptr, nullptr);
         }
         SDL_RenderPresent(renderer);
     }

@@ -40,13 +40,27 @@ namespace dlc {
         SDL_QuitSubSystem(SDL_INIT_CAMERA);
     }
 
-    void Camera::Refresh(SDL_Renderer *renderer) {
+    bool Camera::IsConnected() const {
+        return camera != nullptr;
+    }
+
+    bool Camera::Reconnect() {
+        this->~Camera();
+        new(this) Camera();
+        return IsConnected();
+    }
+
+    void Camera::Render(SDL_Renderer *renderer) {
         if (renderer == nullptr || camera == nullptr) {
             return;
         }
         Uint64 timestamp = 0;
         SDL_Surface *frame = SDL_AcquireCameraFrame(camera, &timestamp);
         if (frame == nullptr) {
+            if (texture != nullptr) {
+                // Safe to rerender the texture
+                SDL_RenderTexture(renderer, texture, nullptr, nullptr);
+            }
             return;
         }
         if (texture == nullptr || texture->w != frame->w || texture->h != frame->h) {
@@ -60,16 +74,15 @@ namespace dlc {
                 frame->w,
                 frame->h
             );
+            if (texture == nullptr) {
+                SDL_ReleaseCameraFrame(camera, frame);
+                Timestamp(std::cerr);
+                std::cerr << SDL_GetError() << std::endl;
+                return;
+            }
         }
         SDL_UpdateTexture(texture, nullptr, frame->pixels, frame->pitch);
+        SDL_RenderTexture(renderer, texture, nullptr, nullptr);
         SDL_ReleaseCameraFrame(camera, frame);
-    }
-
-    SDL_Texture *Camera::GetTexture() {
-        return texture;
-    }
-
-    const SDL_Texture *Camera::GetTexture() const {
-        return texture;
     }
 }

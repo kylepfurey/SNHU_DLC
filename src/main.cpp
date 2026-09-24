@@ -2,6 +2,7 @@
 #include <Timestamp.hpp>
 #include <Window.hpp>
 #include <Camera.hpp>
+#include <Text.hpp>
 #include <Controller.hpp>
 #include <Drone.hpp>
 
@@ -16,6 +17,13 @@ using namespace dlc;
 //
 int main() {
     Window window;
+    if (!window.IsValid()) {
+        return -1;
+    }
+    Text text("Calibri.ttf");
+    if (!text.IsValid()) {
+        return -1;
+    }
     Camera camera;
     Controller controller;
     bool running = true;
@@ -38,22 +46,27 @@ int main() {
                     // 1 - Refresh the camera
                     case SDLK_1:
                         Timestamp(cout);
-                        cout << "Refreshing camera." << endl;
-                        camera.~Camera();
-                        new(&camera) Camera();
+                        cout << "Reconnecting camera." << endl;
+                        camera.Reconnect();
                         break;
                     // 2 - Refresh the controller
                     case SDLK_2:
                         Timestamp(cout);
-                        cout << "Refreshing controller." << endl;
-                        controller.~Controller();
-                        new(&controller) Controller();
+                        cout << "Reconnecting controller." << endl;
+                        controller.Reconnect();
                         break;
                 }
             }
         }
-        camera.Refresh(window.GetRenderer());
-        window.Render(camera.GetTexture());
+        camera.Render(window.GetRenderer());
+        text << "SNHU DLC";
+        text.Render(
+            window.GetRenderer(),
+            {0.5f, 0.1f},
+            {0.5f, 1.0f},
+            {0, 0, 0, 255}
+        );
+        window.UpdateScreen();
     }
     return 0;
 }

@@ -19,13 +19,15 @@ namespace dlc {
         Window(Window &&) = delete;
         Window &operator=(Window &&) = delete;
 
+        bool IsValid() const;
+        bool Rebuild();
         bool UpdateEvent();
         bool ShouldClose() const;
         SDL_Event &GetEvent();
         const SDL_Event &GetEvent() const;
         SDL_Renderer *GetRenderer();
         const SDL_Renderer *GetRenderer() const;
-        void Render(SDL_Texture *texture) const;
+        void UpdateScreen() const;
 
     private:
         SDL_Window *window = nullptr;

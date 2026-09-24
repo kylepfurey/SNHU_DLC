@@ -29,6 +29,20 @@ namespace dlc {
     }
 
     Controller::~Controller() {
+        if (gamepad != nullptr) {
+            SDL_CloseGamepad(gamepad);
+            gamepad = nullptr;
+        }
         SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
+    }
+
+    bool Controller::IsConnected() const {
+        return gamepad != nullptr;
+    }
+
+    bool Controller::Reconnect() {
+        this->~Controller();
+        new(this) Controller();
+        return IsConnected();
     }
 }

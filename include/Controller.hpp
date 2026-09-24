@@ -20,6 +20,9 @@ namespace dlc {
         Controller(Controller &&) = delete;
         Controller &operator=(Controller &&) = delete;
 
+        bool IsConnected() const;
+        bool Reconnect();
+
     private:
         SDL_Gamepad *gamepad = nullptr;
     };

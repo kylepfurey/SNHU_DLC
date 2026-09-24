@@ -4,12 +4,14 @@
 namespace dlc {
     void Timestamp(std::ostream &output) {
         SDL_Time time;
-        if (!SDL_GetCurrentTime(&time)) {
-            output << "?:??:??\t\t" << SDL_GetError() << std::endl;
+        SDL_DateTime date;
+        if (!SDL_GetCurrentTime(&time) ||
+            !SDL_TimeToDateTime(time, &date, true)) {
+            constexpr char badTime[] = "??:??:??\t";
+            output << badTime << SDL_GetError() << std::endl;
+            output << badTime;
             return;
         }
-        SDL_DateTime date;
-        SDL_TimeToDateTime(time, &date, true);
-        output << date.hour << ':' << date.minute << ':' << date.second << "\t\t";
+        output << date.hour << ':' << date.minute << ':' << date.second << '\t';
     }
 }

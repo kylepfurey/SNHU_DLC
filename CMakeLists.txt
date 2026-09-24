@@ -15,6 +15,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/lib)
 # Find and initialize external libraries
 set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/SDL EXCLUDE_FROM_ALL)
+set(SDLTTF_VENDORED OFF CACHE BOOL "" FORCE)
+add_subdirectory(${CMAKE_SOURCE_DIR}/extern/SDL_ttf EXCLUDE_FROM_ALL)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/mavsdk-install)
 find_package(MAVSDK REQUIRED)
 
@@ -28,6 +30,7 @@ target_include_directories(DLC PRIVATE ${CMAKE_SOURCE_DIR}/include)
 # Link external libraries to executable
 target_link_libraries(DLC PRIVATE
         SDL3::SDL3
+        SDL3_ttf::SDL3_ttf
         MAVSDK::mavsdk
 )
 target_compile_definitions(DLC PRIVATE SDL_MAIN_HANDLED)

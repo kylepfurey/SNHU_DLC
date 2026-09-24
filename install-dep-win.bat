@@ -1,6 +1,7 @@
 @echo off
 cd extern
 git clone https://github.com/libsdl-org/SDL.git
+git clone https://github.com/libsdl-org/SDL_ttf.git
 git clone https://github.com/mavlink/MAVSDK.git
 cd MAVSDK\cpp
 git submodule update --init --recursive
