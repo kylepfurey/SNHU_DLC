@@ -19,8 +19,17 @@ namespace dlc {
         Window(Window &&) = delete;
         Window &operator=(Window &&) = delete;
 
-        // Methods here
+        bool UpdateEvent();
+        bool ShouldClose() const;
+        SDL_Event &GetEvent();
+        const SDL_Event &GetEvent() const;
+        SDL_Renderer *GetRenderer();
+        const SDL_Renderer *GetRenderer() const;
+        void Render(SDL_Texture *texture) const;
+
     private:
-        // Members here
+        SDL_Window *window = nullptr;
+        SDL_Renderer *renderer = nullptr;
+        SDL_Event event{};
     };
 }

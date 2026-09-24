@@ -1,7 +1,7 @@
 #pragma once
-#include <mavsdk/mavsdk.h>
-#include <mavsdk/plugins/action/action.h>
-#include <mavsdk/plugins/telemetry/telemetry.h>
+#include <mavsdk/mavsdk.hpp>
+#include <mavsdk/plugins/action/action.hpp>
+#include <mavsdk/plugins/telemetry/telemetry.hpp>
 
 namespace dlc {
     //
@@ -22,13 +22,11 @@ namespace dlc {
         Drone(Drone &&) = delete;
         Drone &operator=(Drone &&) = delete;
 
-        // Methods here
     private:
         mavsdk::Mavsdk mavsdk{
             mavsdk::Mavsdk::Configuration{
-                mavsdk::Mavsdk::ComponentType::GroundStation
+                mavsdk::ComponentType::GroundStation
             }
         };
-        // Members here
     };
 }

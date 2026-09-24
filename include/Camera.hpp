@@ -19,8 +19,12 @@ namespace dlc {
         Camera(Camera &&) = delete;
         Camera &operator=(Camera &&) = delete;
 
-        // Methods here
+        void Refresh(SDL_Renderer *renderer);
+        SDL_Texture *GetTexture();
+        const SDL_Texture *GetTexture() const;
+
     private:
-        // Members here
+        SDL_Camera *camera = nullptr;
+        SDL_Texture *texture = nullptr;
     };
 }

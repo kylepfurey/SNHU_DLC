@@ -29,7 +29,5 @@ target_include_directories(DLC PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(DLC PRIVATE
         SDL3::SDL3
         MAVSDK::mavsdk
-        MAVSDK::mavsdk_action
-        MAVSDK::mavsdk_telemetry
 )
 target_compile_definitions(DLC PRIVATE SDL_MAIN_HANDLED)

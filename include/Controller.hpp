@@ -20,8 +20,7 @@ namespace dlc {
         Controller(Controller &&) = delete;
         Controller &operator=(Controller &&) = delete;
 
-        // Methods here
     private:
-        // Members here
+        SDL_Gamepad *gamepad = nullptr;
     };
 }

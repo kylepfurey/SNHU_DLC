@@ -1,7 +1,7 @@
 #include <Window.hpp>
+#include <Camera.hpp>
 #include <Controller.hpp>
 #include <Drone.hpp>
-#include <Camera.hpp>
 
 using namespace dlc;
 
@@ -12,10 +12,19 @@ using namespace dlc;
 // The video feed thread will pipe data from the camera directly to a window.
 //
 int main() {
-    Controller controller;
-    Drone drone;
     Window window;
     Camera camera;
-    // Driver logic here
+    bool running = true;
+    while (running) {
+        while (window.UpdateEvent()) {
+            if (window.ShouldClose() ||
+                (window.GetEvent().type == SDL_EVENT_KEY_DOWN &&
+                 window.GetEvent().key.key == SDLK_ESCAPE)) {
+                running = false;
+            }
+        }
+        camera.Refresh(window.GetRenderer());
+        window.Render(camera.GetTexture());
+    }
     return 0;
 }
