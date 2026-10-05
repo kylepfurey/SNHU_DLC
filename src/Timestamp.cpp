@@ -12,6 +12,7 @@ namespace dlc {
             output << badTime;
             return;
         }
-        output << date.hour << ':' << date.minute << ':' << date.second << '\t';
+        output << date.hour << ':' << date.minute << ':' << date.second;
+        output << " - SNHU DLC:\t";
     }
 }
