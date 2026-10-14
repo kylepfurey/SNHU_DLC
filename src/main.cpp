@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Timestamp.hpp>
+#include <Config.hpp>
 #include <Window.hpp>
 #include <Text.hpp>
 #include <Controller.hpp>
@@ -16,6 +17,8 @@ using namespace dlc;
 // The video feed thread will pipe data from the camera directly to a window.
 //
 int main() {
+    Config CONFIG;
+    ReloadConfig(CONFIG);
     Window window;
     if (!window.IsValid()) {
         return -1;
@@ -57,6 +60,12 @@ int main() {
                         Timestamp(cout);
                         cout << "Reconnecting controller." << endl;
                         controller.Reconnect();
+                        break;
+                    // 0 - Refresh the config file
+                    case SDLK_0:
+                        Timestamp(cout);
+                        cout << "Reloading Config.json." << endl;
+                        ReloadConfig(CONFIG);
                         break;
                 }
             } else if ((window.GetEvent().type == SDL_EVENT_CAMERA_DEVICE_ADDED ||

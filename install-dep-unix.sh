@@ -1,7 +1,7 @@
 cd extern
 git clone https://github.com/microsoft/vcpkg.git "$HOME/vcpkg"
 "$HOME/vcpkg/bootstrap-vcpkg.sh"
-"$HOME/vcpkg/vcpkg" install sdl3 sdl3-ttf
+"$HOME/vcpkg/vcpkg" install sdl3 sdl3-ttf nlohmann-json
 git clone --recursive https://github.com/mavlink/MAVSDK.git
 cd MAVSDK/cpp
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \

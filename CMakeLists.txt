@@ -28,6 +28,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/lib)
 # Find and initialize external libraries
 find_package(SDL3 CONFIG REQUIRED)
 find_package(SDL3_ttf CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/extern/mavsdk-install)
 find_package(MAVSDK REQUIRED)
 
@@ -42,6 +43,7 @@ target_include_directories(DLC PRIVATE ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(DLC PRIVATE
         SDL3::SDL3
         SDL3_ttf::SDL3_ttf
+        nlohmann_json::nlohmann_json
         MAVSDK::mavsdk
 )
 target_compile_definitions(DLC PRIVATE SDL_MAIN_HANDLED)

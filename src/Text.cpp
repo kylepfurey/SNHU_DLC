@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Timestamp.hpp"
 #include "Text.hpp"
 
