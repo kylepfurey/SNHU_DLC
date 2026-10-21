@@ -2,6 +2,8 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include <chrono>
+
 #include <Timestamp.hpp>
 #include <Config.hpp>
 #include <Window.hpp>
@@ -11,6 +13,7 @@
 #include <Drone.hpp>
 
 using namespace std;
+using namespace chrono;
 using namespace dlc;
 
 //
@@ -20,25 +23,25 @@ using namespace dlc;
 // The video feed thread will pipe data from the camera directly to a window->
 //
 int main() {
-    // Create objects
+    // Create thread objects
+    Config CONFIG;                                  // INPUT THREAD
+    ReloadConfig(CONFIG);
     auto window = make_shared<Window>();            // BOTH THREADS
     if (!window->IsValid()) {
         return -1;
     }
-    Text text("Calibri.ttf");               // VIDEO THREAD
+    Text text("Calibri.ttf");                // VIDEO THREAD
     if (!text.IsValid()) {
         return -1;
     }
     auto controller = make_shared<Controller>();    // BOTH THREADS
     auto camera = make_shared<Camera>();            // BOTH THREADS
     auto drone = make_shared<Drone>();              // BOTH THREADS
-    Config CONFIG; // INPUT THREAD
-    ReloadConfig(CONFIG);
-    Timestamp(cout);
-    cout << "Starting." << endl;
+    atomic<bool> running = true;                    // BOTH THREADS
+    auto time = steady_clock::now();                // INPUT THREAD
+    atomic<double> deltaTime = 1.0;                 // BOTH THREADS
 
     // Create threads
-    atomic<bool> running = true;
     auto updateInput = [&] {
         while (running) {
             // Handle events
@@ -97,17 +100,25 @@ int main() {
                     }
                 }
             }
+
             // Update input
             controller->Update();
+
+            // Update delta time
+            auto current = steady_clock::now();
+            deltaTime = duration_cast<duration<double> >(current - time).count();
+            time = current;
         }
     };
     auto updateVideo = [&] {
         while (running) {
             // Clear screen
             window->ClearScreen();
-            // Video feed
+
+            // Render video feed
             camera->Render(window->GetRenderer());
-            // Title text
+
+            // Display title text
             text << "SNHU DLC";
             text.Render(
                 window->GetRenderer(),
@@ -116,7 +127,8 @@ int main() {
                 {0.5f, 0.0f},
                 {0, 0, 0, 255}
             );
-            // Controller status
+
+            // Display controller status
             bool controllerConnected = controller->IsConnected();
             text << "Controller";
             text.Render(
@@ -131,7 +143,8 @@ int main() {
                 {0.0f, 0.0f},
                 {0, 0, 0, 255}
             );
-            // Camera status
+
+            // Display camera status
             bool cameraConnected = camera->IsConnected();
             text << "Camera";
             text.Render(
@@ -146,7 +159,8 @@ int main() {
                 {0.0f, 1.0f},
                 {0, 0, 0, 255}
             );
-            // Stick inputs
+
+            // Display stick inputs
             SDL_FPoint leftStick = controller->GetLeftStick();
             text << '{' << leftStick.x << ", " << leftStick.y << "} LS";
             text.Render(
@@ -165,8 +179,9 @@ int main() {
                 {1.0f, 0.0f},
                 {0, 0, 0, 255}
             );
-            // Framerate
-            text << 0 << " FPS";
+
+            // Display framerate
+            text << static_cast<int>(1.0 / deltaTime) << " FPS";
             text.Render(
                 window->GetRenderer(),
                 {0.0f, 0.0f},
@@ -174,12 +189,15 @@ int main() {
                 {0.0f, 0.0f},
                 {0, 0, 0, 255}
             );
-            // Render
+
+            // Render screen
             window->UpdateScreen();
         }
     };
 
     // Run threads
+    Timestamp(cout);
+    cout << "Starting threads." << endl;
     thread inputThread(updateInput);
     updateVideo();
     inputThread.join();
