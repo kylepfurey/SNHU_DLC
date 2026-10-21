@@ -21,18 +21,19 @@ using namespace dlc;
 //
 int main() {
     // Create objects
-    Config CONFIG;                           // INPUT THREAD
-    ReloadConfig(CONFIG);
-    auto window = std::make_shared<Window>();     // BOTH THREADS
+    auto window = make_shared<Window>();            // BOTH THREADS
     if (!window->IsValid()) {
         return -1;
     }
-    Text text("Calibri.ttf");         // VIDEO THREAD
+    Text text("Calibri.ttf");               // VIDEO THREAD
     if (!text.IsValid()) {
         return -1;
     }
-    auto controller = std::make_shared<Controller>(); // BOTH THREADS
-    auto camera = std::make_shared<Camera>();     // BOTH THREADS
+    auto controller = make_shared<Controller>();    // BOTH THREADS
+    auto camera = make_shared<Camera>();            // BOTH THREADS
+    auto drone = make_shared<Drone>();              // BOTH THREADS
+    Config CONFIG; // INPUT THREAD
+    ReloadConfig(CONFIG);
     Timestamp(cout);
     cout << "Starting." << endl;
 
@@ -58,15 +59,19 @@ int main() {
                             break;
                         // 1 - Refresh the camera
                         case SDLK_1:
-                            Timestamp(cout);
-                            cout << "Reconnecting camera." << endl;
-                            camera->Reconnect();
+                            if (!camera->IsConnected()) {
+                                Timestamp(cout);
+                                cout << "Reconnecting camera." << endl;
+                                camera->Reconnect();
+                            }
                             break;
                         // 2 - Refresh the controller
                         case SDLK_2:
-                            Timestamp(cout);
-                            cout << "Reconnecting controller." << endl;
-                            controller->Reconnect();
+                            if (!controller->IsConnected()) {
+                                Timestamp(cout);
+                                cout << "Reconnecting controller." << endl;
+                                controller->Reconnect();
+                            }
                             break;
                         // 0 - Refresh the config file
                         case SDLK_0:
@@ -158,6 +163,15 @@ int main() {
                 {1.0f, 0.5f},
                 {255, 255, 0, 255},
                 {1.0f, 0.0f},
+                {0, 0, 0, 255}
+            );
+            // Framerate
+            text << 0 << " FPS";
+            text.Render(
+                window->GetRenderer(),
+                {0.0f, 0.0f},
+                {255, 255, 255, 255},
+                {0.0f, 0.0f},
                 {0, 0, 0, 255}
             );
             // Render
