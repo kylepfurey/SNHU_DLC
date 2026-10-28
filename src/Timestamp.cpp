@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <SDL3/SDL.h>
 #include "Timestamp.hpp"
 
@@ -12,7 +13,14 @@ namespace dlc {
             output << badTime;
             return;
         }
-        output << date.hour << ':' << date.minute << ':' << date.second;
+        if (date.hour == 0) {
+            date.hour = 12;
+        } else if (date.hour > 12) {
+            date.hour -= 12;
+        }
+        output << std::setw(2) << std::setfill('0') << date.hour << ':'
+                << std::setw(2) << std::setfill('0') << date.minute << ':'
+                << std::setw(2) << std::setfill('0') << date.second;
         output << " - SNHU DLC:\t";
     }
 }

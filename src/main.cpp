@@ -169,7 +169,7 @@ try_again:
                 );
 
                 // Display framerate
-                text << static_cast<int>(1.0 / deltaTime) << " FPS";
+                text << "INPUT " << static_cast<int>(1.0 / deltaTime) << " FPS";
                 text.Render(
                     window->GetRenderer(),
                     {0.0f, 0.0f},
@@ -190,6 +190,7 @@ try_again:
         updateVideo();
         inputThread.join();
     } catch (const runtime_error &err) {
+        // Reset on exception
         Timestamp(cerr);
         cerr << "Unhandled exception! " << err.what() << '!' << endl;
         goto try_again;
